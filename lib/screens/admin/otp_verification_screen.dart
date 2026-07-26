@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/animated_widgets.dart';
 import '../user/home_screen.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -62,13 +60,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       if (!mounted) return;
 
       showMessage('Verification failed: $e');
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        loading = false;
+      });
     }
-
-    if (!mounted) return;
-
-    setState(() {
-      loading = false;
-    });
   }
 
   void showMessage(String message) {
@@ -87,165 +85,86 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.85),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.arrow_back_rounded,
-              color: AppColors.textPrimary,
-              size: 20,
-            ),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Verify OTP',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ),
-      body: AnimatedGradientBackground(
-        colors: const [Color(0xFFF0EEFF), Color(0xFFFFF0F7), Color(0xFFFDF1E6)],
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 80, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 30),
+      appBar: AppBar(title: const Text('Verify OTP')),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 50),
 
-                FadeInUp(
-                  child: Center(
-                    child: Container(
-                      width: 110,
-                      height: 110,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: AppGradients.hero,
-                        boxShadow: [AppShadows.glow],
-                      ),
-                      child: const Icon(
-                        Icons.verified_user_rounded,
-                        size: 56,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+              const Icon(Icons.verified_user, size: 80),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                'Enter OTP',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 12),
+
+              Text(
+                'An OTP has been sent to ${widget.phone}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+              ),
+
+              const SizedBox(height: 40),
+
+              TextField(
+                controller: otpController,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  letterSpacing: 8,
+                  fontWeight: FontWeight.bold,
                 ),
-
-                const SizedBox(height: 28),
-
-                FadeInUp(
-                  delay: const Duration(milliseconds: 120),
-                  child: const Text(
-                    'Enter OTP',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                decoration: const InputDecoration(
+                  labelText: 'OTP',
+                  hintText: '123456',
+                  border: OutlineInputBorder(),
+                  counterText: '',
                 ),
+              ),
 
-                const SizedBox(height: 10),
+              const SizedBox(height: 24),
 
-                FadeInUp(
-                  delay: const Duration(milliseconds: 200),
-                  child: Text(
-                    'An OTP has been sent to\n${widget.phone}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColors.textSecondary,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                FadeInUp(
-                  delay: const Duration(milliseconds: 280),
-                  child: GlassCard(
-                    padding: const EdgeInsets.all(22),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        TextField(
-                          controller: otpController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 6,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            letterSpacing: 12,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            labelText: '6-digit OTP',
-                            hintText: '• • • • • •',
-                            counterText: '',
-                            hintStyle: TextStyle(
-                              color: AppColors.textSecondary.withValues(
-                                alpha: 0.5,
-                              ),
-                              letterSpacing: 6,
-                            ),
+              SizedBox(
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: loading ? null : verifyOtp,
+                  child: loading
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(),
+                        )
+                      : const Text(
+                          'VERIFY OTP',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 14),
-                        GradientButton(
-                          label: 'VERIFY OTP',
-                          icon: Icons.check_circle_outline_rounded,
-                          loading: loading,
-                          colors: AppColors.primaryGradient,
-                          onPressed: loading ? null : verifyOtp,
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
+              ),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                FadeInUp(
-                  delay: const Duration(milliseconds: 360),
-                  child: Center(
-                    child: TextButton.icon(
-                      onPressed: loading
-                          ? null
-                          : () {
-                              Navigator.pop(context);
-                            },
-                      icon: const Icon(
-                        Icons.edit_rounded,
-                        size: 18,
-                        color: AppColors.primary,
-                      ),
-                      label: const Text(
-                        'Change Mobile Number',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              TextButton(
+                onPressed: loading
+                    ? null
+                    : () {
+                        Navigator.pop(context);
+                      },
+                child: const Text('Change Mobile Number'),
+              ),
+            ],
           ),
         ),
       ),
