@@ -6,7 +6,6 @@
 .DS_Store
 .atom/
 .build/
-.story_app/build/
 .buildlog/
 .history
 .svn/
@@ -32,7 +31,6 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-/story_app/build/
 /coverage/
 lib/firebase_options.dart
 

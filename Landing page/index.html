@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#7c3aed" />
+  <title>স্টোরি রিডার — বাংলা গল্প পড়ুন, উপভোগ করুন</title>
+  <meta name="description" content="বাংলাদেশের সবচেয়ে সুন্দর গল্প পড়ার অ্যাপ। গল্প পড়ুন, লাইক ও কমেন্ট করুন, সেভ করুন। মাত্র ২ টাকা + ভ্যাটে দৈনিক সাবস্ক্রিপশন।" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📖%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+  <!-- Animated background blobs -->
+  <div class="bg-decor" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#home" class="logo">
+        <span class="logo-mark">📖</span>
+        <span class="logo-text">স্টোরি <span>রিডার</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#features">ফিচার</a>
+        <a href="#how">কীভাবে কাজ করে</a>
+        <a href="#pricing">সাবস্ক্রিপশন</a>
+        <a href="#faq">প্রশ্নোত্তর</a>
+        <a href="#download" class="nav-cta">ডাউনলোড</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="মেনু টগল">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div class="hero-text">
+        <span class="badge reveal">✨ বাংলাদেশের জন্য তৈরি</span>
+        <h1 class="reveal">
+          হাজারো <span class="grad-text">বাংলা গল্প</span><br />
+          এখন আপনার হাতের মুঠোয়
+        </h1>
+        <p class="lead reveal">
+          রোমান্টিক, রহস্য, থ্রিলার, প্রেম — সব ধরনের গল্প পড়ুন এক জায়গায়।
+          গল্পে লাইক ও কমেন্ট করুন, প্রিয় গল্প সেভ করে রাখুন, আর প্রিমিয়াম
+          সাবস্ক্রিপশনে পড়ুন বিজ্ঞাপনমুক্ত অভিজ্ঞতা।
+        </p>
+
+        <div class="hero-cta reveal">
+          <a href="#download" class="btn btn-primary btn-lg" id="heroDownloadBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            এখনই ডাউনলোড করুন
+          </a>
+          <a href="#features" class="btn btn-ghost btn-lg">ফিচার দেখুন</a>
+        </div>
+
+        <ul class="hero-stats reveal">
+          <li>
+            <strong data-counter="5000">০</strong>
+            <span>গল্প</span>
+          </li>
+          <li>
+            <strong data-counter="50000">০</strong>
+            <span>পাঠক</span>
+          </li>
+          <li>
+            <strong data-counter="4.8" data-decimal="true">০</strong>
+            <span>রেটিং ★</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Phone mockup -->
+      <div class="hero-visual reveal">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="screen-header">
+              <span>📚 জনপ্রিয় গল্প</span>
+              <span>🔍</span>
+            </div>
+            <div class="story-card s1">
+              <div class="story-cover c1">প্রেমের গল্প</div>
+              <div class="story-meta">
+                <p>হৃদয়ের কথা</p>
+                <small>❤️ ১২.৫ক · 💬 ৩৪০</small>
+              </div>
+            </div>
+            <div class="story-card s2">
+              <div class="story-cover c2">রহস্য</div>
+              <div class="story-meta">
+                <p>অজানা পথে</p>
+                <small>❤️ ৮.২ক · 💬 ১৯৮</small>
+              </div>
+            </div>
+            <div class="story-card s3">
+              <div class="story-cover c3">থ্রিলার</div>
+              <div class="story-meta">
+                <p>শেষ রাতের ছায়া</p>
+                <small>❤️ ৬.৭ক · 💬 ২৪১</small>
+              </div>
+            </div>
+            <div class="screen-nav">
+              <span>🏠</span><span>📖</span><span>❤️</span><span>👤</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating elements -->
+        <div class="float-bubble fb-1">❤️ লাইক</div>
+        <div class="float-bubble fb-2">💬 মন্তব্য</div>
+        <div class="float-bubble fb-3">🔖 সেভ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trusted / logo strip -->
+  <section class="trusted">
+    <div class="container">
+      <p class="trusted-text">বাংলাদেশের পাঠকরা যেভাবে ভালোবাসছেন</p>
+      <div class="trusted-logos">
+        <span>🇧🇩 Made in Bangladesh</span>
+        <span>·</span>
+        <span>📖 ৫,০০০+ গল্প</span>
+        <span>·</span>
+        <span>⭐ ৪.৮ রেটিং</span>
+        <span>·</span>
+        <span>🔒 নিরাপদ পেমেন্ট</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">ফিচারসমূহ</span>
+        <h2>যেসব সুবিধা পাবেন</h2>
+        <p>স্টোরি রিডার অ্যাপে আপনার পড়ার অভিজ্ঞতা হবে আরও আনন্দদায়ক ও সহজ।</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-1">📖</div>
+          <h3>হাজারো গল্প পড়ুন</h3>
+          <p>রোমান্টিক, রহস্য, থ্রিলার, সামাজিক, ঐতিহাসিক — সব ধরনের বাংলা গল্প এক জায়গায়। প্রতিদিন নতুন গল্প যোগ হয়।</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-2">❤️</div>
+          <h3>লাইক ও কমেন্ট</h3>
+          <p>পছন্দের গল্পে লাইক দিন, মন্তব্য করুন এবং অন্য পাঠকদের সাথে আপনার ভাবনা শেয়ার করুন।</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-3">🔖</div>
+          <h3>গল্প সেভ করুন</h3>
+          <p>পড়তে পছন্দের গল্প সেভ করে রাখুন, পরে যেকোনো সময় অফলাইনে পড়তে পারবেন।</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-4">🌙</div>
+          <h3>ডার্ক মোড</h3>
+          <p>রাতে পড়ার সময় চোখের জন্য আরামদায়ক ডার্ক মোড ও সামঞ্জস্যযোগ্য ফন্ট সাইজ।</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-5">📲</div>
+          <h3>অফলাইন পড়ুন</h3>
+          <p>ইন্টারনেট ছাড়াই সেভ করা গল্প পড়ুন। ভ্রমণের সময় বা ইন্টারনেট না থাকলেও সমস্যা নেই।</p>
+        </article>
+
+        <article class="feature-card reveal">
+          <div class="feat-icon ic-6">🎁</div>
+          <h3>সাবস্ক্রিপশন সুবিধা</h3>
+          <p>প্রিমিয়াম সদস্য হলে বিজ্ঞাপনমুক্ত পড়া, এক্সক্লুসিভ গল্প ও আনলক করা সব চ্যাপ্টার।</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how" id="how">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">কীভাবে কাজ করে</span>
+        <h2>মাত্র ৩টি ধাপে শুরু করুন</h2>
+        <p>অ্যাপ ডাউনলোড করুন, সাবস্ক্রিপশন নিন, আর পড়া শুরু করুন।</p>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">১</div>
+          <h3>ডাউনলোড করুন</h3>
+          <p>নিচের বাটনে ক্লিক করে APK ফাইলটি ডাউনলোড করুন এবং ইনস্টল করুন।</p>
+        </div>
+        <div class="step-arrow reveal">→</div>
+        <div class="step reveal">
+          <div class="step-num">২</div>
+          <h3>সাবস্ক্রিপশন নিন</h3>
+          <p>মাত্র ২ টাকা + ভ্যাটে দৈনিক সাবস্ক্রিপশন নিন। যেকোনো সময় বাতিল করতে পারবেন।</p>
+        </div>
+        <div class="step-arrow reveal">→</div>
+        <div class="step reveal">
+          <div class="step-num">৩</div>
+          <h3>পড়া শুরু করুন</h3>
+          <p>হাজারো বাংলা গল্প থেকে পছন্দের গল্প পড়ুন, লাইক ও কমেন্ট করুন।</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">সাবস্ক্রিপশন প্ল্যান</span>
+        <h2>সাশ্রয়ী মূল্যে প্রিমিয়াম পড়ার অভিজ্ঞতা</h2>
+        <p>লুকানো কোনো খরচ নেই। যেকোনো সময় বাতিল করতে পারবেন।</p>
+      </div>
+
+      <div class="price-card reveal">
+        <div class="price-tag">জনপ্রিয়</div>
+        <h3>দৈনিক সাবস্ক্রিপশন</h3>
+        <p class="price-desc">প্রতিদিন পড়ুন, প্রতিদিন মাত্র ২ টাকা + ভ্যাট</p>
+        <div class="price-amount">
+          <span class="currency">৳</span>
+          <span class="amount">২</span>
+          <span class="period">/ দিন</span>
+        </div>
+        <p class="vat-line">+ ভ্যাট (VAT) প্রযোজ্য</p>
+        <ul class="price-features">
+          <li>✅ সব গল্পে আনলিমিটেড অ্যাক্সেস</li>
+          <li>✅ বিজ্ঞাপনমুক্ত পড়ার অভিজ্ঞতা</li>
+          <li>✅ এক্সক্লুসিভ প্রিমিয়াম গল্প</li>
+          <li>✅ অফলাইনে সেভ ও পড়ুন</li>
+          <li>✅ লাইক ও কমেন্ট সুবিধা</li>
+          <li>✅ যেকোনো সময় বাতিল করুন</li>
+        </ul>
+        <a href="#download" class="btn btn-primary btn-block">এখনই শুরু করুন</a>
+        <p class="price-foot">কোনো বাঁধাই নেই · যেকোনো সময় আনসাবস্ক্রাইব করুন</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">পাঠকদের মতামত</span>
+        <h2>পাঠকরা কী বলছেন</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"অসাধারণ অ্যাপ! গল্পের কালেকশন অনেক সুন্দর এবং পড়তে বসলে আর উঠতে ইচ্ছা করে না।"</p>
+          <div class="testi-user"><span class="avatar av-1">র</span><div><strong>রাহেলা বেগম</strong><small>ঢাকা</small></div></div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"মাত্র ২ টাকায় এত সুন্দর সার্ভিস! আমি প্রতিদিন পড়ি এবং লাইক-কমেন্ট করি।"</p>
+          <div class="testi-user"><span class="avatar av-2">স</span><div><strong>সাইফুল ইসলাম</strong><small>চট্টগ্রাম</small></div></div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"ডার্ক মোড আর অফলাইন পড়ার সুবিধা দারুণ। যাতায়াতের সময় পড়ি।"</p>
+          <div class="testi-user"><span class="avatar av-3">ন</span><div><strong>নাফিসা আক্তার</strong><small>সিলেট</small></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">প্রশ্নোত্তর</span>
+        <h2>সচরাচর জিজ্ঞাসা</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item reveal" open>
+          <summary>সাবস্ক্রিপশন খরচ কত?</summary>
+          <p>সাবস্ক্রিপশন মাত্র <strong>২ টাকা + ভ্যাট</strong> প্রতিদিন। এর বেশি কিছু নেই।</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>আমি কি যেকোনো সময় আনসাবস্ক্রাইব করতে পারব?</summary>
+          <p>হ্যাঁ, অবশ্যই। অ্যাপের সেটিংস থেকে যেকোনো সময় সাবস্ক্রিপশন বাতিল করতে পারবেন, কোনো জিজ্ঞাসা নেই।</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>অ্যাপটি কীভাবে ডাউনলোড করব?</summary>
+          <p>এই পেজের <strong>ডাউনলোড</strong> বাটনে ক্লিক করুন। APK ফাইলটি আমাদের সার্ভার থেকে সরাসরি ডাউনলোড হবে।</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>ইন্টারনেট ছাড়া কি পড়া যাবে?</summary>
+          <p>হ্যাঁ, গল্প সেভ করে রাখলে অফলাইনেও পড়তে পারবেন।</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>পেমেন্ট কীভাবে করব?</summary>
+          <p>মোবাইল ওয়ালেট, বিকাশ, নগদ, রকেট সহ একাধিক পেমেন্ট অপশন সাপোর্ট করা আছে।</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>গল্প কি প্রতিদিন আপডেট হয়?</summary>
+          <p>হ্যাঁ, প্রতিদিন নতুন গল্প যোগ করা হয়। প্রিমিয়াম সদস্যরা এক্সক্লুসিভ গল্পও পাবেন।</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final Download CTA -->
+  <section class="cta" id="download">
+    <div class="container cta-inner reveal">
+      <div class="cta-text">
+        <span class="eyebrow light">শুরু করার সময় এসেছে</span>
+        <h2>আজই ডাউনলোড করুন, পড়া শুরু করুন</h2>
+        <p>হাজারো বাংলা গল্প, লাইক ও কমেন্ট, সেভ ও শেয়ার — সব এক অ্যাপে। মাত্র ২ টাকা + ভ্যাটে দৈনিক সাবস্ক্রিপশন।</p>
+        <div class="cta-buttons">
+          <a href="#" class="btn btn-white btn-lg" id="downloadBtn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            অ্যাপ ডাউনলোড করুন (APK)
+          </a>
+          <div class="cta-meta">
+            <span>📦 সাইজ: ~৮ MB</span>
+            <span>📱 অ্যান্ড্রয়েড ৭.০+</span>
+            <span>🔒 নিরাপদ ডাউনলোড</span>
+          </div>
+        </div>
+      </div>
+      <div class="cta-visual">
+        <div class="big-emoji">📖</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="foot-brand">
+        <a href="#home" class="logo">
+          <span class="logo-mark">📖</span>
+          <span class="logo-text">স্টোরি <span>রিডার</span></span>
+        </a>
+        <p>বাংলাদেশের জন্য তৈরি সেরা বাংলা গল্প পড়ার অ্যাপ।</p>
+      </div>
+      <div class="foot-col">
+        <h4>অ্যাপ</h4>
+        <a href="#features">ফিচার</a>
+        <a href="#pricing">সাবস্ক্রিপশন</a>
+        <a href="#download">ডাউনলোড</a>
+      </div>
+      <div class="foot-col">
+        <h4>সহায়তা</h4>
+        <a href="#faq">প্রশ্নোত্তর</a>
+        <a href="#">যোগাযোগ</a>
+        <a href="#">ব্যক্তিগত তথ্য নীতি</a>
+      </div>
+      <div class="foot-col">
+        <h4>যোগাযোগ</h4>
+        <p>📧 support@bdappsdigitalapps.com</p>
+        <p>🇧🇩 বাংলাদেশ</p>
+      </div>
+    </div>
+    <div class="foot-bottom container">
+      <p>© ২০২৬ স্টোরি রিডার · সর্বস্বত্ব সংরক্ষিত</p>
+      <p>তৈরি হয়েছে বাংলাদেশে 🇧🇩</p>
+    </div>
+  </footer>
+
+  <!-- Download toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span>⬇️ ডাউনলোড শুরু হচ্ছে...</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
