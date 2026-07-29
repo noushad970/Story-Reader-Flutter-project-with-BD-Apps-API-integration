@@ -56,6 +56,10 @@ class AppLocalizations {
   String get tooltipUnsubscribe => isBangla ? 'আনসাবস্ক্রাইব' : 'Unsubscribe';
   String get tooltipTheme => isBangla ? 'থিম পরিবর্তন' : 'Toggle theme';
   String get tooltipLanguage => isBangla ? 'ভাষা পরিবর্তন' : 'Change language';
+  String get subscribeBannerMessage => isBangla
+      ? 'আপনার সাবস্ক্রিপশন নেই। সাবস্ক্রাইব করতে এখানে টোকা দিন।'
+      : 'Your subscription is inactive. Tap to subscribe.';
+  String get subscribeBannerCta => isBangla ? 'সাবস্ক্রাইব' : 'SUBSCRIBE';
   String get unsubscribeTitle =>
       isBangla ? 'আনসাবস্ক্রাইব করবেন?' : 'Unsubscribe?';
   String get unsubscribeBody => isBangla
@@ -63,6 +67,67 @@ class AppLocalizations {
       : 'You will lose access to subscriber stories.';
   String get unsubscribeConfirm => isBangla ? 'আনসাবস্ক্রাইব' : 'UNSUBSCRIBE';
   String get unsubscribeFailed =>
+      isBangla ? 'আনসাবস্ক্রাইব ব্যর্থ হয়েছে' : 'Unsubscribe failed';
+  String get unsubscribeSuccess => isBangla
+      ? 'আপনার সাবস্ক্রিপশন বাতিল করা হয়েছে'
+      : 'Your subscription has been cancelled';
+  String get unsubscribeScreenTitle =>
+      isBangla ? 'আনসাবস্ক্রাইব' : 'Unsubscribe';
+  String get unsubscribeScreenHeading =>
+      isBangla ? 'আপনার সাবস্ক্রিপশন বাতিল করুন' : 'Cancel your subscription';
+  String get unsubscribeScreenBody => isBangla
+      ? 'নিচে আপনার মোবাইল নম্বর দিন এবং আনসাবস্ক্রাইব বাটনে চাপ দিন। আপনার সাবস্ক্রিপশন বাতিল করা হবে।'
+      : 'Enter your mobile number below and tap Unsubscribe. Your subscription will be cancelled.';
+  String get unsubscribePhoneLabel =>
+      isBangla ? 'মোবাইল নম্বর' : 'Mobile Number';
+  String get unsubscribePhoneRequired => isBangla
+      ? 'অনুগ্রহ করে একটি মোবাইল নম্বর দিন'
+      : 'Please enter a mobile number';
+  String get unsubscribePhoneInvalid => isBangla
+      ? 'একটি সঠিক বাংলাদেশি মোবাইল নম্বর দিন'
+      : 'Enter a valid Bangladesh mobile number';
+  String get unsubscribeChargesNotice => isBangla
+      ? 'বাতিল করলে সাবস্ক্রিপশন চার্জ প্রযোজ্য হতে পারে'
+      : 'Cancellation charges may apply';
+  String get unsubscribeCta => isBangla ? 'আনসাবস্ক্রাইব করুন' : 'UNSUBSCRIBE';
+  String get unsubscribeDisclaimer => isBangla
+      ? 'আনসাবস্ক্রাইব করলে আপনি সাবস্ক্রাইবার গল্পে অ্যাক্সেস হারাবেন।'
+      : 'Unsubscribing will remove your access to subscriber stories.';
+
+  // ============================================================
+  // UNSUBSCRIBE — SMS INSTRUCTIONS (Telecom short-code method)
+  // The user can also cancel their subscription by sending an
+  // SMS. Required by the BD Apps operator flow.
+  // ============================================================
+  String get unsubscribeSmsTitle =>
+      isBangla ? 'এসএমএসের মাধ্যমে আনসাবস্ক্রাইব' : 'Unsubscribe via SMS';
+  String get unsubscribeSmsHint => isBangla
+      ? 'আপনার ফোনের মেসেজ অ্যাপ থেকে নিচের নম্বরে এসএমএস পাঠান:'
+      : 'Open your phone’s Messages app and send an SMS to:';
+  String get unsubscribeSmsSmsText => 'STOP 1297';
+  String get unsubscribeSmsDestination => '21213';
+  String get unsubscribeSmsFullInstruction => isBangla
+      ? 'এসএমএস: ব্যবহারকারীকে “STOP 1297” টাইপ করে 21213 নম্বরে পাঠিয়ে আনসাবস্ক্রিপশন সম্পন্ন করতে হবে।'
+      : 'SMS: User will have to type “STOP 1297” and send to 21213 to complete the un-subscription.';
+  String get unsubscribeSmsCopyShortcode =>
+      isBangla ? 'ছোট কোড কপি করুন' : 'Copy short-code';
+  String get unsubscribeSmsCopied =>
+      isBangla ? 'এসএমএস টেক্সট কপি হয়েছে' : 'SMS text copied';
+  String get unsubscribeSmsOpenMessages =>
+      isBangla ? 'মেসেজ অ্যাপ খুলুন' : 'Open Messages app';
+
+  // ============================================================
+  // UNSUBSCRIBE — RESULT MESSAGES
+  // ============================================================
+  String get unsubscribeSuccessMessage => isBangla
+      ? 'আপনার সাবস্ক্রিপশন বাতিল করা হয়েছে'
+      : 'Your subscription has been cancelled';
+  String get unsubscribeAlreadyUnregisteredMessage => isBangla
+      ? 'এই নম্বরটি অপারেটরের কাছে নিবন্ধিত নেই। আপনার লোকাল সেশন '
+            'মুছে ফেলা হয়েছে।'
+      : 'This number is not registered with the operator. Your local '
+            'session has been cleared.';
+  String get unsubscribeFailedMessage =>
       isBangla ? 'আনসাবস্ক্রাইব ব্যর্থ হয়েছে' : 'Unsubscribe failed';
 
   // ============================================================
@@ -149,6 +214,8 @@ class AppLocalizations {
   String get pricePerDay => isBangla ? '\u{09F3}২' : '\u{09F3}2';
   String get perDay => isBangla ? '/ দিন' : '/ day';
   String get subscribeNow => isBangla ? 'সাবস্ক্রাইব করুন' : 'SUBSCRIBE NOW';
+  String get loginOrSubscribe =>
+      isBangla ? 'লগইন / সাবস্ক্রাইব' : 'LOGIN / SUBSCRIBE';
   String copyright(int year) =>
       isBangla ? '\u{00A9} $year গল্প পড়ুন' : '\u{00A9} $year Story Reader';
 

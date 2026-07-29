@@ -34,15 +34,66 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     });
 
     try {
+      // ======================================================
+      // STEP 1: Ask the BD Apps backend whether this number is
+      // already an active subscriber. If yes, sign them in
+      // immediately — no OTP needed (they already pay for the
+      // service).
+      // ======================================================
+
+      final loginResult = await AuthService.loginIfSubscribed(phone);
+
+      if (!mounted) return;
+
+      if (loginResult['success'] == true) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
+        );
+        return;
+      }
+
+      // ======================================================
+      // STEP 2: NOT an active subscriber.
+      //
+      // They MUST verify with OTP before they can read stories.
+      // We send the OTP now and hand the user off to the OTP
+      // screen. Even if the backend later calls the number
+      // "already registered" (E1336 — a lapsed/former
+      // subscriber), they still need to complete OTP to
+      // re-activate the subscription with the operator.
+      //
+      // We do NOT auto-open a local account here. Doing so
+      // would let non-subscribers into the home screen without
+      // paying, which defeats the point of the BD Apps
+      // subscription gate.
+      // ======================================================
+
       final result = await AuthService.sendOtp(phone);
 
       if (!mounted) return;
+
+      // If the operator reports the number is "already
+      // registered" (lapsed subscriber), we surface a friendlier
+      // hint on the OTP screen via a SnackBar — but we still
+      // require the user to enter the OTP that was just sent.
+      if (AuthService.isAlreadyRegisteredError(result)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'This number has subscribed before. Please enter the OTP '
+              'we just sent to re-activate your subscription.',
+            ),
+          ),
+        );
+      }
 
       if (result['success'] == true) {
         final referenceNo = result['referenceNo']?.toString();
 
         // ======================================================
-        // TEST USER
+        // TEST USER (no real OTP, jump straight in)
         // ======================================================
 
         if (phone == AuthService.testMobileNumber) {
@@ -89,11 +140,11 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
 
       showMessage('Something went wrong: $e');
     } finally {
-      if (!mounted) return;
-
-      setState(() {
-        loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 
@@ -113,7 +164,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Subscribe')),
+      appBar: AppBar(title: const Text('Login / Subscribe')),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -135,7 +186,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               const SizedBox(height: 12),
 
               Text(
-                'Enter your Bangladesh mobile number to continue with subscription.',
+                'Subscribers will be signed in automatically. New users will be guided through subscription.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey.shade700, fontSize: 16),
               ),
@@ -180,7 +231,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               const SizedBox(height: 24),
 
               const Text(
-                'Subscription charge: ৳2 per day',
+                'New users: subscription charge is ৳2 per day',
                 textAlign: TextAlign.center,
               ),
             ],

@@ -15,6 +15,7 @@ import '../../widgets/loading_widget.dart';
 import '../../widgets/story_card.dart';
 import '../../widgets/theme_toggle_button.dart';
 import '../landing/landing_screen.dart';
+import 'unsubscribe_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool loading = true;
   bool unsubscribing = false;
+  bool isSubscribed = false;
 
   String? selectedCategoryId;
 
@@ -53,21 +55,16 @@ class _HomeScreenState extends State<HomeScreen> {
   // ============================================================
 
   Future<void> verifySubscription() async {
-    final isSubscribed = await AuthService.checkCurrentSubscription();
+    final subscribed = await AuthService.checkCurrentSubscription();
 
     if (!mounted) return;
 
-    if (!isSubscribed) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LandingScreen()),
-        (route) => false,
-      );
-
-      return;
-    }
-
+    // Always let the user browse stories once they are logged in.
+    // We refresh the subscription flag so the home screen can show a
+    // reminder banner for lapsed users, but we never bounce them back to
+    // the landing page.
     setState(() {
+      isSubscribed = subscribed;
       loading = false;
     });
 
@@ -124,106 +121,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // ============================================================
   // UNSUBSCRIBE
+  //
+  // Opens the dedicated UnsubscribeScreen where the user enters the
+  // mobile number and confirms. After a successful unsubscribe we
+  // refresh the local subscription state and bounce back to the
+  // landing page (because the local session has been cleared).
   // ============================================================
 
   Future<void> unsubscribe() async {
-    final loc = AppLocalizations.of(context);
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(22),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.error.withValues(alpha: 0.12),
-                  ),
-                  child: const Icon(
-                    Icons.cancel_outlined,
-                    size: 32,
-                    color: AppColors.error,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  loc.unsubscribeTitle,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  loc.unsubscribeBody,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 22),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        child: Text(loc.cancel.toUpperCase()),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GradientButton(
-                        label: loc.unsubscribeConfirm,
-                        colors: const [AppColors.error, Color(0xFFFF6B6B)],
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (confirm != true) {
-      return;
-    }
-
     setState(() {
       unsubscribing = true;
     });
 
-    final result = await AuthService.unsubscribe();
-
-    if (!mounted) return;
-
-    setState(() {
-      unsubscribing = false;
-    });
-
-    if (result['success'] == true) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const LandingScreen()),
-        (route) => false,
+    try {
+      // The new screen handles its own confirmation, API call, and
+      // Firestore update. We just push it on top and wait for the
+      // result via Navigator.pop.
+      final result = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(builder: (_) => const UnsubscribeScreen()),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result['message']?.toString() ?? loc.unsubscribeFailed,
-          ),
-        ),
-      );
+
+      if (!mounted) return;
+
+      if (result == true) {
+        // User successfully unsubscribed. Mirror Firestore locally
+        // and send the user back to the landing screen so they can
+        // either log in with a different number or subscribe again.
+        setState(() {
+          isSubscribed = false;
+        });
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const LandingScreen()),
+          (route) => false,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          unsubscribing = false;
+        });
+      }
     }
   }
 
@@ -285,119 +224,96 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: [
             // ======================================================
-            // HEADER
+            // HEADER (mobile-safe two-row layout)
             // ======================================================
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 4),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 44,
+                  // Row 1: logo + title (Expanded) + language toggle
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          gradient: AppGradients.hero,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x556A5AE0),
+                              blurRadius: 14,
+                              offset: Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.menu_book_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              loc.welcomeBack,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              loc.appTitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 19,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const LanguageToggleButton(),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  // Row 2: 4 compact action buttons, unsubscribe pushed right
+                  SizedBox(
                     height: 44,
-                    decoration: BoxDecoration(
-                      gradient: AppGradients.hero,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x556A5AE0),
-                          blurRadius: 14,
-                          offset: Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.menu_book_rounded,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Text(
-                          loc.welcomeBack,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        _HeaderActionButton(
+                          tooltip: loc.tooltipHome,
+                          icon: Icons.home_rounded,
+                          onPressed: _goHome,
                         ),
-                        Text(
-                          loc.appTitle,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        const SizedBox(width: 8),
+                        _HeaderActionButton(
+                          tooltip: loc.tooltipBookmarks,
+                          icon: Icons.bookmark_rounded,
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/bookmarks');
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        const ThemeToggleButton(),
+                        const Spacer(),
+                        _HeaderActionButton(
+                          tooltip: loc.tooltipUnsubscribe,
+                          icon: Icons.cancel_outlined,
+                          iconColor: AppColors.error,
+                          onPressed: unsubscribing ? null : unsubscribe,
                         ),
                       ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _goHome,
-                    tooltip: loc.tooltipHome,
-                    icon: Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.home_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const LanguageToggleButton(),
-                  const SizedBox(width: 4),
-                  const ThemeToggleButton(),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    tooltip: loc.tooltipBookmarks,
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/bookmarks');
-                    },
-                    icon: Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor,
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.bookmark_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  IconButton(
-                    onPressed: unsubscribing ? null : unsubscribe,
-                    tooltip: loc.tooltipUnsubscribe,
-                    icon: Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.cancel_outlined,
-                        color: AppColors.error,
-                        size: 20,
-                      ),
                     ),
                   ),
                 ],
@@ -483,9 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
 
                   if (snapshot.hasError) {
-                    return Center(
-                      child: Text(loc.failedLoadCategories),
-                    );
+                    return Center(child: Text(loc.failedLoadCategories));
                   }
 
                   final categories = snapshot.data ?? [];
@@ -527,10 +441,88 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 8),
 
             // ======================================================
+            // SUBSCRIPTION REMINDER (only for lapsed users)
+            // ======================================================
+            if (!isSubscribed) _buildSubscribeBanner(loc),
+
+            // ======================================================
             // STORIES (paged, with bookmark icon overlay)
             // ======================================================
             Expanded(child: _buildStoriesList(loc)),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubscribeBanner(AppLocalizations loc) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            Navigator.pushNamed(context, '/phone-login');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.12),
+                  AppColors.accent.withValues(alpha: 0.12),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.workspace_premium_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    loc.subscribeBannerMessage,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  loc.subscribeBannerCta,
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -554,10 +546,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: _loadFirstPage,
-                child: Text(loc.retry),
-              ),
+              ElevatedButton(onPressed: _loadFirstPage, child: Text(loc.retry)),
             ],
           ),
         ),
@@ -722,6 +711,46 @@ class _AllChip extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderActionButton extends StatelessWidget {
+  const _HeaderActionButton({
+    required this.tooltip,
+    required this.icon,
+    required this.onPressed,
+    this.iconColor,
+  });
+
+  final String tooltip;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+      icon: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          shape: BoxShape.circle,
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Icon(
+          icon,
+          color: iconColor ?? theme.colorScheme.primary,
+          size: 18,
         ),
       ),
     );

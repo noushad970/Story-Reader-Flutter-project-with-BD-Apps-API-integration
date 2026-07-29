@@ -131,35 +131,84 @@
 
   // -------- Download button (APK) --------
   const toast = $('#toast');
-  const showToast = (msg, ms = 2400) => {
+  const showToast = (msg, ms = 2800) => {
+    if (!toast) return;
     toast.firstElementChild.textContent = msg;
     toast.classList.add('show');
     clearTimeout(showToast._t);
     showToast._t = setTimeout(() => toast.classList.remove('show'), ms);
   };
 
+  // Collect every button that should download the APK. We support
+  // BOTH the legacy id-based selectors (#downloadBtn, #heroDownloadBtn)
+  // AND any element marked with [data-download]. Using a single
+  // Set means duplicate IDs across the page never break the wiring.
+  const downloadBtns = Array.from(new Set([
+    ...$$('#downloadBtn'),
+    ...$$('#heroDownloadBtn'),
+    ...$$('[data-download]'),
+  ]));
+
+  // Disable every download button while a download is in flight
+  const setBusy = (busy) => {
+    downloadBtns.forEach((btn) => {
+      if (!btn) return;
+      btn.style.pointerEvents = busy ? 'none' : '';
+      btn.style.opacity = busy ? '.7' : '';
+    });
+  };
+
+  /**
+   * Robust APK downloader.
+   *
+   * The APK is hosted on a different origin (www.bdappsdigitalapps.com)
+   * and that server does NOT send CORS or Content-Disposition headers,
+   * which rules out the usual "fetch as blob → saveBlob" trick and
+   * makes a same-origin <a download> click unreliable.
+   *
+   * The most reliable, no-server-change approach is to navigate the
+   * *current tab* to the APK URL. Because the server responds with
+   * Content-Type: application/vnd.android.package-archive, every
+   * modern browser (Chrome, Edge, Firefox, Safari) will trigger a
+   * download in the browser's native download bar instead of rendering
+   * the binary. The "Back" button takes the user back to the page.
+   *
+   * We also keep a same-origin anchor with the `download` attribute
+   * as a same-tab navigation hint, which works when the landing page
+   * happens to be served from the same origin.
+   */
   const triggerDownload = (e) => {
     if (e) e.preventDefault();
     showToast('⬇️ ডাউনলোড শুরু হচ্ছে...');
+    setBusy(true);
 
-    // Create a temporary anchor to trigger native download
+    // 1) Try the download-attribute anchor click first (best UX when
+    //    the page is hosted on the same origin as the APK).
     const a = document.createElement('a');
     a.href = APK_URL;
     a.download = APK_FILENAME;
     a.rel = 'noopener';
-    a.target = '_blank';
+    a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    setTimeout(() => {
+      try { document.body.removeChild(a); } catch (_) {}
+    }, 1000);
 
-    // After a delay show completion hint
-    setTimeout(() => showToast('✅ ডাউনলোড শুরু হয়েছে — ফাইলটি সেভ করুন'), 1600);
+    // 2) Fallback / cross-origin guarantee: top-level navigation to
+    //    the APK. Browsers download application/vnd.android.package-archive
+    //    responses instead of rendering them.
+    try {
+      window.top.location.href = APK_URL;
+    } catch (_) {
+      window.location.href = APK_URL;
+    }
+
+    showToast('✅ ডাউনলোড শুরু হয়েছে — ফাইলটি সেভ করুন', 3500);
+    setTimeout(() => setBusy(false), 1500);
   };
 
-  const downloadBtn = $('#downloadBtn');
-  const heroDownloadBtn = $('#heroDownloadBtn');
-  if (downloadBtn) downloadBtn.addEventListener('click', triggerDownload);
-  if (heroDownloadBtn) heroDownloadBtn.addEventListener('click', triggerDownload);
+  downloadBtns.forEach((btn) => btn.addEventListener('click', triggerDownload));
 
   // -------- Subtle parallax on hero blobs (mouse move) --------
   const blobs = $$('.blob');

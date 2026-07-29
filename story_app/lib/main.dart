@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'app_localizations.dart';
 import 'firebase_options.dart';
 import 'screens/landing/landing_screen.dart';
+import 'screens/admin/phone_login_screen.dart';
 import 'screens/user/bookmarks_screen.dart';
 import 'screens/user/home_screen.dart';
 import 'services/auth_service.dart';
@@ -28,10 +29,12 @@ Future<void> main() async {
   final localeProvider = LocaleProvider();
   await localeProvider.load();
 
-  runApp(StoryReaderApp(
-    themeProvider: themeProvider,
-    localeProvider: localeProvider,
-  ));
+  runApp(
+    StoryReaderApp(
+      themeProvider: themeProvider,
+      localeProvider: localeProvider,
+    ),
+  );
 }
 
 class StoryReaderApp extends StatelessWidget {
@@ -70,6 +73,7 @@ class StoryReaderApp extends StatelessWidget {
             home: const StartupScreen(),
             routes: {
               '/bookmarks': (_) => const BookmarksScreen(),
+              '/phone-login': (_) => const PhoneLoginScreen(),
             },
           );
         },

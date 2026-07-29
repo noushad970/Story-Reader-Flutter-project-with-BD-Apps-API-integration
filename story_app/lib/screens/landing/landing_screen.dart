@@ -240,7 +240,7 @@ class LandingScreen extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(6),
                             child: GradientButton(
-                              label: loc.subscribeNow,
+                              label: loc.loginOrSubscribe,
                               icon: Icons.arrow_forward_rounded,
                               colors: const [
                                 Color(0xFFFF7AB6),

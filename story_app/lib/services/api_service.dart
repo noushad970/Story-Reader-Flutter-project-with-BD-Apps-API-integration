@@ -41,7 +41,7 @@ class ApiService {
       final response = await http.post(
         Uri.parse(sendOtpUrl),
         headers: _jsonHeaders,
-        body: {'user_mobile': phone},
+        body: Uri(queryParameters: {'user_mobile': phone}).query,
       );
 
       return _parseResponse(response);
@@ -81,7 +81,7 @@ class ApiService {
       final response = await http.post(
         Uri.parse(checkSubscriptionUrl),
         headers: _jsonHeaders,
-        body: {'user_mobile': phone},
+        body: Uri(queryParameters: {'user_mobile': phone}).query,
       );
 
       return _parseResponse(response);
@@ -99,7 +99,7 @@ class ApiService {
       final response = await http.post(
         Uri.parse(unsubscribeUrl),
         headers: _jsonHeaders,
-        body: {'user_mobile': phone},
+        body: Uri(queryParameters: {'user_mobile': phone}).query,
       );
 
       return _parseResponse(response);
